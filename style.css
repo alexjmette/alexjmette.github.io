@@ -12,3 +12,8 @@
       column-count: 2;
     }
   }
+
+  .container {
+    clear: left;
+    margin: 50px;
+  }
