@@ -9,7 +9,7 @@
 
   h1 {
     font-family: 'Montserrat', sans-serif !important;
-
+    color: #2A9D8F;
   }
 
   h2 {
@@ -18,7 +18,23 @@
     margin-top: 50px;
   }
 
-  h3, h4 {
+  h3 {
+    font-family: 'Montserrat', sans-serif !important;
+    font-size: 1.25rem !important;
+    position: absolute;
+  bottom: 5%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  }
+
+  #downarrow {
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translate(-50%, -50%);
+  }
+
+  h4 {
     font-family: 'Montserrat', sans-serif !important;
     font-size: 1.25rem !important;
   }
@@ -30,7 +46,7 @@
 
   .jumbotron {
     background-size: cover;
-    height: 100vh;
+    /* height: 100vh; */ 
   }
 
   a:link {
