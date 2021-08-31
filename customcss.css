@@ -9,29 +9,17 @@
 
   h1 {
     font-family: 'Montserrat', sans-serif !important;
-    color: #2A9D8F;
+    color: black;
   }
 
   h2 {
     font-family: 'Montserrat', sans-serif !important;
     font-size: 2.25rem !important;
-    margin-top: 50px;
   }
 
   h3 {
     font-family: 'Montserrat', sans-serif !important;
     font-size: 1.25rem !important;
-    position: absolute;
-  bottom: 5%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  }
-
-  #downarrow {
-    position: absolute;
-    bottom: 0;
-    left: 50%;
-    transform: translate(-50%, -50%);
   }
 
   h4 {
@@ -41,25 +29,34 @@
 
   h5 {
     font-family: 'Montserrat', sans-serif !important;
-    color: #E9C46A;
   }
 
-  .jumbotron {
-    background-size: cover;
-    /* height: 100vh; */ 
-  }
+
 
   a:link {
-    color: #F4A261 !important;
+    color:black !important;
  }
 
  a:visited {
-  color: #F4A261 !important;
+  color: black !important;
 }
 
 a:hover {
-  color: #F4A261 !important;
+  color: black !important;
 }
+
+@media (min-width: 768px) {
+  .abs-center-x {
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%);
+  }
+}
+
+.jumbotron {
+  background: url(images/kite.jpg) fixed center no-repeat;
+  background-size: cover;
+ }
 
 .image-block {
   border: 3px solid white ;
