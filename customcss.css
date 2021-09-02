@@ -56,6 +56,7 @@ a:hover {
 .jumbotron {
   background: url(images/kite.jpg) fixed center no-repeat;
   background-size: cover;
+  background-repeat: no-repeat;
  }
 
 .image-block {
