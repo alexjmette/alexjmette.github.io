@@ -41,8 +41,9 @@
     <div class="container">
       <nav class="navbar navbar-expand-lg navbar-light">
 
-        <a class="navbar-brand" href="https://alexjmette.github.io/"> am</a>
-
+        <a href="https://alexjmette.github.io/"> 
+          <img class="navbard-brand" src="images/amlogo.png" alt="handwritten initials a.m.">
+        </a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
           <span class="navbar-toggler-icon"></span>
         </button>
@@ -51,18 +52,18 @@
 
         <ul class="nav navbar-nav abs-center-x">
           <li class="nav-item">
-            <a class="nav-link" href="#About">About</a>
+            <a class="nav-link font-weight-bold" href="#About"><u>About</u></a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="#Projects">Projects</a>
+            <a class="nav-link font-weight-bold" href="#Projects"><u>Projects</u></a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="#Interests">Interests</a>
+            <a class="nav-link font-weight-bold" href="#Interests"><u>Interests</u></a>
           </li>
         </ul>
         
         
-        <ul class="nav navbar-nav ml-auto">
+        <ul class="nav navbar-nav ml-auto col-xs-4">
           <li class="nav-item">
             <a class="nav-link" href="https://www.linkedin.com/in/alexanderjmette/" target="_blank" rel="noopener noreferrer"><img src="images/linkedin_icon.png"> </a>
           </li>
@@ -81,7 +82,7 @@
   <!-- headline -->
 
       <div class="col-md-4">
-          <h1 class="display 1 text-light text-left">Alex Mette</h1>
+          <h1 class="display 1 text-light text-left font-weight-bold">Alex Mette</h1>
           <h4 class="text-light text-left mb-xl-5 pb-xl-5">Salesforce Developer</h4>      
       </div>
 
@@ -117,56 +118,294 @@
 
 
       <!-- Projects Section -->
-      <div class="container-fluid bg-light">
+      <div class="container-fluid bg-light" id="page-section">
               <h2 id="Projects" class="text-center mt-xl-5 pt-xl-5">Projects</h2>
 
+
+              <!-- Forecast card -->
               <div class="row">
-                <div class="col-md-4 mt-3">
-                  <div class="card">
+                <div class="col-md-4 mt-3 d-flex align-items-stretch mb-xl-5">
+                  <div class="card shadow-sm p-3 bg-white rounded">
                     <div class="card-body">
                       <h5 class="card-title">Automate hours forecasting</h5>
-                      <p class="card-text">Take a list of staff and allocates their hours across the course of the project.</p>
-                      <a href="https://alexjmette.github.io/forecast.html" class="card-link">More.</a>
+                      <img class="card-img-top mb-3" src="images/forecast.png" alt="dashboard with graphs and charts">
+                      <p class="card-text"> Apex class that takes a list of staff and allocates their hours across the course of the project. 
+                                            This is achieved by building a map that corresponds to the day of the project in % terms and a multiplier.
+                                            that can be applied to the number of hours for each staff.
+                      </p>
+                      <button class="pill">Salesforce</button>
+                      <button class="pill">Apex</button>
+                      <button type="button" class="btn btn-primary float-right" data-toggle="modal" data-target="#forecastModal">
+                        Read More
+                      </button>                  
                     </div>
                   </div>
                 </div>
 
-                <div class="col-md-4 mt-3">
-                  <div class="card">
+                <!--Forecast Modal -->
+                <div class="modal fade" id="forecastModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                  <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                      <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">Forecast Apex Class</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                          <span aria-hidden="true">&times;</span>
+                        </button>
+                      </div>
+                      <div class="modal-body">
+
+		<p>This project was based on a request to generate a forecase of hours based off 
+			a set of simple assumptions about how quickly hours would be used depending on 
+			what point in the project's duration we are in.
+		</p>	
+		<p>
+			There are a few other components to the project
+			 related to importing data from a budget template, 
+			 unpivoting the data, and creating records that correspond 
+			 to the different staff on the project.
+		</p>
+		<p>	
+			Then, the forecast class takes the project start 
+			and end dates and the number of hours allocated to 
+			each staff person and spreads them out across the 
+			project in order to create a baseline forecast.
+		</p>
+
+    <pre>
+			<code>
+			public class Forecast {
+				/**
+				* Gets the weighted percentage based on what percentage of the time the day falls on
+				*
+				* @param dayPercent The percentage of the span the day falls on
+				* @param dayHours The number of hours allocated
+				* @return The weighted number of hours
+				
+				the projected hours amount is the based on a burn rate assumption
+									//First Q: Date <= 25% of total = +10%
+						//Second Q: Date <= 25% of total = -10%
+									//Third Q: Date <= 25% of total = -10%
+									//Fourth Q: Date <= 25% of total = +10%
+				*/
+				@TestVisible
+				private static Decimal getWeightedPercentage(Decimal dayPercent, Decimal dayHours) {
+					if (
+						dayPercent <= 0 ||
+						dayPercent >= 1
+					) {
+						return 0;
+					}
+			
+					Decimal multiplier = 1.10;
+			
+					if (
+						dayPercent >= 0.25 &&
+						dayPercent < 0.5
+					) {
+						multiplier = 0.90;
+					}
+			
+					return dayHours * multiplier;
+				}
+			
+				/**
+				* Gets all of the applicable budget detail records
+				*
+				* @param ids The ids to fetch
+				* @return The budget detail records
+				*/
+				@TestVisible
+				private static List<Budget_Detail__c> getBudgetDetailsForId(Set<Id> ids) {
+					return [
+						select Budget__c,
+							Budget__r.Period_of_Performance_Start__c,
+							Budget__r.Period_of_Performance_End__c,
+							Role__c,
+							Total_per_role__c,
+							Total_Value__c
+						from Budget_Detail__c
+						where Id in :ids
+					];
+				}
+			
+				/**
+				* Gets the key for the day map based on the date
+				*
+				* @param d The date to generate a key from
+				* @return The key
+				*/
+				@TestVisible
+				private static String getDayMapKey(Date d) {
+					Datetime dt = d;
+					return dt.format('yyyy-MM-dd');
+				}
+			
+				/**
+				* Creates forcast records for a list of budget detail ids
+				*
+				* @param staffList The list of ids
+				*/
+				@future
+				public static void createForecast (List<Id> staffList) {
+					List <Forecast__c> forecastInsert = new List<Forecast__c>();
+			
+					for (Budget_Detail__c bs : getBudgetDetailsForId(new Set<Id>(staffList))) {
+						Date startDate = bs.Budget__r.Period_of_Performance_Start__c;
+						Date offsetStart = startDate.toStartOfMonth();
+						Date endDate = bs.Budget__r.Period_of_Performance_End__c;
+						Date offsetEnd = endDate.addMonths(1).toStartOfMonth().addDays(-1);
+			
+						Integer offsetDiff = offsetStart.daysBetween(startDate);
+						Integer budgetDays = startDate.daysBetween(endDate) + 1;
+						Integer days = offsetStart.daysBetween(offsetEnd) + 1;
+			
+						Decimal dayHours = (bs.Total_per_role__c / budgetDays).setScale(3);
+			
+						Map<String, Decimal> dayMap = new Map<String, Decimal>();
+			
+						for (Integer i = 0; i <= days; i += 1) {
+							Decimal iDecimal = Decimal.valueOf(i);
+							Decimal ioffsetDiff = Decimal.valueOf(offsetDiff);
+							Decimal dayPercent = ((iDecimal - ioffsetDiff) / budgetDays).setScale(3);
+							String key = getDayMapKey(offsetStart.addDays(i));
+			
+							dayMap.put(key, getWeightedPercentage(dayPercent, dayHours));
+						}
+			
+						Integer months = offsetStart.monthsBetween(offsetEnd) + 1;
+						for (Integer m = 0; m < months; m += 1) {
+							Date forecastDate = offsetStart.addMonths(m);
+							Decimal projectedHours = 0;
+			
+							Integer monthNumber = forecastDate.month();
+							Integer yearNumber = forecastDate.year();
+							Integer monthDays = Date.daysInMonth(yearNumber, monthNumber);
+			
+							for (Integer a = 0; a < monthDays; a += 1) {
+								String key = getDayMapKey(forecastDate.addDays(a));
+								projectedHours += dayMap.get(key);
+							}
+			
+							forecastInsert.add(new Forecast__c(
+								Budget_Detail__c = bs.Id,
+								Date__c = forecastDate,
+								Projected_Hours__c = projectedHours
+							});
+						}
+					}
+			
+					insert forecastInsert;
+				}
+			}
+		
+			</code>	
+		</pre>
+                      </div>
+                      <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <a href="https://github.com/alexjmette/forecast" target="_blank" rel="noopener noreferrer" class="btn btn-primary">Open in Github</a>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+    <!-- Program Management card -->
+                <div class="col-md-4 mt-3 d-flex align-items-stretch mb-xl-5">
+                  <div class="card shadow-sm p-3 bg-white rounded">
                     <div class="card-body">
                       <h5 class="card-title">Program management app</h5>
-                      <p class="card-text">Custom Salesforce app for a mentor and education org that focuses on inclusive AI.</p>
-                      <a href="https://alexjmette.github.io/forecast.html" class="card-link">More.</a>
+                      <img class="card-img-top mb-3" src="images/ai4all.png" alt="dashboard with graphs and charts">
+                      <p class="card-text">Custom Salesforce application for a mentor and education organization that focuses on inclusive AI.
+                        The application included a survey to capture feedback from participants
+                        as well as a system for quantifying their level of engagement with AI4ALL's various programs.
+                      </p>
+                      <button class="pill">Salesforce</button>
+                      <button class="pill">Data Modeling</button>
+                      <button type="button" class="btn btn-primary float-right" data-toggle="modal" data-target="#programManagementModal">
+                        Read More
+                      </button>  
                     </div>
                   </div>
                 </div>
 
-                <div class="col-md-4 mt-3">
-                  <div class="card">
+
+                                <!--Forecast Modal -->
+                                <div class="modal fade" id="programManagementModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                  <div class="modal-dialog" role="document">
+                                    <div class="modal-content">
+                                      <div class="modal-header">
+                                        <h5 class="modal-title" id="exampleModalLabel">Program Management Application</h5>
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                          <span aria-hidden="true">&times;</span>
+                                        </button>
+                                      </div>
+                                      <div class="modal-body">
+                
+                    <p>AI4ALL has a variety of programs that engage students in learning about artificial intelligence (AI), 
+                      with the goal of fostering diversity in the field.
+                      They needed an application to track the students that participated in their various programs, 
+                      which include summer camps, webinars, internships, and mentorship programs.
+                    </p>	
+
+                    <p>
+                      The application also needed to provide a way to send and receive surveys to students to measure the impact
+                      of the program. This was primarily measure based on the number of students who went on to pursue computer science degrees
+                      and later work in the AI field. The application used FormAssembly to create a survey along with a custom object to store results,
+                      so the team could track changes over time.
+                    </p>
+
+                    <p>
+                    Programs were tracked primarily using campaigns to leverage built-in functionality around campaign statistics.
+                    </p>
+                                      </div>
+                                      <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                        <a href="https://ai-4-all.org" target="_blank" rel="noopener noreferrer" class="btn btn-primary">Open AI4ALL's website</a>
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+
+               <!-- Dashboard card-->
+
+
+                <div class="col-md-4 mt-3 d-flex align-items-stretch mb-xl-5">
+                  <div class="card shadow-sm p-3 bg-white rounded">
                     <div class="card-body">
-                      <h5 class="card-title">Visualize clinical trials data</h5>
-                      <p class="card-text">Trends around geographies, sponsors, and therapeutic areas.</p>
-                      <a href="https://alexjmette.github.io/" class="card-link">More.</a>
+                      <h5 class="card-title">Visualizing data on clinical trials</h5>
+                      <img class="card-img-top mb-3" src="images/ctgov.png" alt="dashboard with graphs and charts">
+                      <p class="card-text">Using data from the clinical trials transformation initiative, which provides an open, 
+                        PostGRE SQL database of millions of rows of data from clinicaltrials.gov. 
+                        Created visualizations of trends around geographies, sponsors, and therapeutic areas.</p>
+                      <button class="pill">Data Analysis</button>
+                      <button class="pill">PowerBI</button>
+                      <a href="https://alexjmette.github.io/" class="btn btn-primary float-right">Read More</a>
                     </div>
                   </div>
                 </div>
 
-                <div class="col-md-4 mt-3">
-                  <div class="card">
+                <div class="col-md-4 mt-3 d-flex align-items-stretch mb-xl-5">
+                  <div class="card shadow-sm p-3 bg-white rounded">
                     <div class="card-body">
                       <h5 class="card-title">Caspian Sea-Level Model</h5>
+                      <img class="card-img-top mb-3" src="images/caspian.png" alt="dashboard with graphs and charts">
                       <p class="card-text">Model to predict sea-level change based on historical data and bathymetry.</p>
-                      <a href="https://alexjmette.github.io/" class="card-link">More.</a>
+                      <button class="pill">Environmental Modeling</button>
+                      <a href="https://alexjmette.github.io/" class="btn btn-primary float-right">Read More</a>
                     </div>
                   </div>
                 </div>
 
-                <div class="col-md-4 mt-3 mb-xl-5">
-                  <div class="card">
+                <div class="col-md-4 mt-3 d-flex align-items-stretch mb-xl-5">
+                  <div class="card shadow-sm p-3 bg-white rounded">
                     <div class="card-body">
                       <h5 class="card-title">Education social impact bond</h5>
+                      <img class="card-img-top mb-3" src="images/eg.png" alt="dashboard with graphs and charts">
                       <p class="card-text">First of it's kind, outcomes-based financing model for girls' education in India</p>
-                      <a href="https://alexjmette.github.io/" class="card-link">More.</a>
+                      <button class="pill">Non-profits</button>
+                      <button class="pill">Finance</button>
+                      <a href="https://alexjmette.github.io/" class="btn btn-primary float-right">Read More</a>
+                      
                     </div>
                   </div>
                 </div>
@@ -189,20 +428,22 @@
             <p> Cooking. I love to cook. My speciality is pizza. I keep a pair of over-ear headphones for setting off the smoke alarm. </p>
         </div>
         <div class="image-block col-sm-4" style="background: url(images/garden.jpg) no-repeat center top;background-size:cover;">
-            <p> Gardening. Though I appreciate that I can go buy vegetables when it doesn't work out. (It often doesn't). </p>
+            <p> Gardening. Though I appreciate that I can go buy vegetables when it doesn't work out. (It usually doesn't). </p>
         </div>
         <div class="image-block col-sm-4" style="background: url(images/bookcase.jpg) no-repeat center top;background-size:cover;">
-            <p> Building things. I like to work with my hands and make simple, functional stuff for my house. </p>
+            <p> Building things. I like to work with my hands and make simple, functional stuff. </p>
         </div>
         <div class="image-block col-sm-4" style="background: url(images/packing.jpg) no-repeat center top;background-size:cover;">
-            <p> Adventure. Lately, travel hasn't been part of life but to me adventure means being open to what's happening around you.</p>
+            <p> Adventure. Lately, travel hasn't been part of life but I try to keep the spirit alive and find fun things to explore with my kid.</p>
         </div>
       <div class="image-block col-sm-4 mb-5" style="background: url(images/surfboard.jpg) no-repeat center top;background-size:cover;">
-        <p> Surfing. Which is, in my opinion, the most beautiful way to travel. </p>            
+        <p> Surfing. I started late in life and don't live all that close to the beach so I make up for my lack of skill with plenty of enthusiasm for mediocre waves and lots of driving. </p>            
     </div>
     </div>
 </div>
 </div>
+
+
 
 
     <!-- Optional JavaScript -->
