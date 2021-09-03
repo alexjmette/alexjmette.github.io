@@ -53,11 +53,11 @@ a:hover {
   }
 }
 
-.jumbotron {
+/* .jumbotron {
   background: fixed center no-repeat;
   background-size: cover;
  }
-
+*/
 .image-block {
   border: 3px solid white ;
   background-color: black;
