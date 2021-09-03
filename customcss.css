@@ -9,8 +9,7 @@
 
   h1 {
     font-family: 'Montserrat', sans-serif !important;
-    color: black;
-  }
+    }
 
   h2 {
     font-family: 'Montserrat', sans-serif !important;
@@ -54,12 +53,6 @@ a:hover {
 }
 
 .jumbotron {
-/*  background: fixed center no-repeat; */
-  background-size: cover;
-  background: no-repeat center center fixed; 
-  -webkit-background-size: cover;
-  -moz-background-size: cover;
-  -o-background-size: cover;
   background-size: cover;
   }
 
