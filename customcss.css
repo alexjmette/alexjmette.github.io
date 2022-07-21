@@ -30,20 +30,6 @@
     font-family: 'Montserrat', sans-serif !important;
   }
 
-
-
-  a:link {
-    color:black !important;
- }
-
- a:visited {
-  color: black !important;
-}
-
-a:hover {
-  color: black !important;
-}
-
 @media (min-width: 768px) {
   .abs-center-x {
       position: absolute;
@@ -51,6 +37,17 @@ a:hover {
       transform: translateX(-50%);
   }
 }
+
+a:link { text-decoration: none; }
+
+
+a:visited { text-decoration: none; }
+
+
+a:hover { text-decoration: none; }
+
+
+a:active { text-decoration: none; }
 
 .jumbotron {
   background-size: cover;
@@ -99,6 +96,15 @@ a:hover {
   background-color: #264653;
   color: #ffffff !important;
   border: none;
+}
+
+.btn-outline-primary,
+.btn-outline-primary:hover,
+.btn-success:active,
+.btn-primary:visited {
+  background-color: #ffffff;
+  color: #264653 !important;
+  border-color: #264653;
 }
 
 .modal {
